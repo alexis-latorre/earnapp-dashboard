@@ -1,7 +1,15 @@
 <template>
   <div class="m-6">
-    <button @click="getProcesses" type="button" class="btn btn-success">
-      Refresh
+    <button
+      v-if="canRefresh"
+      @click="getProcesses"
+      type="button"
+      class="btn btn-success"
+    >
+      <i class="fas fa-sync-alt"></i>
+    </button>
+    <button v-else type="button" class="btn btn-success" disabled>
+      <i class="fas fa-spin fa-sync-alt"></i>
     </button>
     <table class="table">
       <thead>
@@ -36,15 +44,26 @@ export default {
   data() {
     return {
       processes: null,
+      canRefresh: true,
     };
   },
   emits: ["alert"],
   methods: {
     getProcesses() {
+      if (!this.canRefresh) return;
+
+      this.processes = null;
+      this.canRefresh = false;
       this.axios
         .get("https://wl1th.sse.codesandbox.io/earnapp")
-        .then((res) => (this.processes = res.data))
-        .catch((e) => this.$emit("alert", e.message));
+        .then((res) => {
+          this.processes = res.data;
+          this.canRefresh = true;
+        })
+        .catch((e) => {
+          this.$emit("alert", e.message);
+          this.canRefresh = true;
+        });
     },
   },
   mounted() {
