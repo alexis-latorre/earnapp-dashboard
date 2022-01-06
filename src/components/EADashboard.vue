@@ -101,7 +101,6 @@
       </tbody>
     </table>
   </div>
-  <button @click="test">test</button>
 </template>
 
 <script>
@@ -114,15 +113,6 @@ export default {
   },
   emits: ["alert"],
   methods: {
-    test() {
-      this.axios
-        .get("https://82.64.246.23")
-        .then((res) => console.log(res))
-        .catch((e) => {
-          this.$emit("alert", e.message);
-          this.canRefresh = true;
-        });
-    },
     getServers() {
       if (!this.canRefresh) return;
 
